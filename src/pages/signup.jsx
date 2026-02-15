@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Link } from 'react-router';
 
@@ -27,6 +28,18 @@ const SignupPage = () => {
           <Input placeholder="Email" type="email" />
           <PasswordInput />
           <PasswordInput placeholder={'Confirme sua senha'} />
+          <div className="items-top flex gap-2">
+            <Checkbox id="terms" name="terms-checkbox-basic" />
+            <label
+              htmlFor="terms-checkbox-basic"
+              className="text-xs text-muted-foreground opacity-75"
+            >
+              Ao clicar em "Criar conta", você concorda com o nosso{' '}
+              <a href="" className="text-white underline">
+                Termo de Serviço e Política de Privacidade.
+              </a>
+            </label>
+          </div>
         </CardContent>
         <CardFooter>
           <Button className="w-full">Criar conta</Button>
