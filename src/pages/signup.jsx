@@ -8,9 +8,12 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { EyeClosedIcon, EyeIcon } from 'lucide-react';
+import { useState } from 'react';
 import { Link } from 'react-router';
 
 const SignupPage = () => {
+  const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center gap-3">
       <Card className="w-[500px]">
@@ -24,7 +27,19 @@ const SignupPage = () => {
           <Input placeholder="Primeiro Nome" />
           <Input placeholder="Sobrenome" />
           <Input placeholder="Email" type="email" />
-          <Input placeholder="Senha" type="password" />
+          <div className="relative">
+            <Input
+              placeholder="Senha"
+              type={showPassword ? 'text' : 'password'}
+            />
+            <Button
+              variant="ghost"
+              className="absolute bottom-0 right-0 top-0 my-auto mr-1 h-8 w-8 rounded-full p-0 text-muted-foreground"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <EyeClosedIcon /> : <EyeIcon />}
+            </Button>
+          </div>
         </CardContent>
         <CardFooter>
           <Button className="w-full">Criar conta</Button>
