@@ -74,7 +74,7 @@ const SignupPage = () => {
                 Insira seus dados para criar uma nova conta.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-2">
               {/* PRIMEIRO NOME */}
               <FormField
                 control={form.control}

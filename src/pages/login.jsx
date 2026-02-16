@@ -57,7 +57,7 @@ const LoginPage = () => {
                 Insira seus dados para fazer login.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-2">
               {/* EMAIL */}
               <FormField
                 control={form.control}
