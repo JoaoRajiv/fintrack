@@ -18,6 +18,7 @@ const PasswordInput = forwardRef(
           variant="ghost"
           className="absolute bottom-0 right-0 top-0 my-auto mr-1 h-8 w-8 rounded-full p-0 text-muted-foreground"
           onClick={() => setShowPassword((prev) => !prev)}
+          type="button"
         >
           {showPassword ? <EyeClosedIcon /> : <EyeIcon />}
         </Button>

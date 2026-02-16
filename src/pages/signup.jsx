@@ -66,9 +66,9 @@ const SignupPage = () => {
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center gap-3">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="w-full">
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
           <Card className="w-[500px]">
-            <CardHeader>
+            <CardHeader className="text-center">
               <CardTitle>Crie a sua conta</CardTitle>
               <CardDescription>
                 Insira seus dados para criar uma nova conta.
