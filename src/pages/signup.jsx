@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { data, Link } from 'react-router';
 import PasswordInput from '@/components/password-input';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,6 +22,10 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { useMutation } from '@tanstack/react-query';
+import api from '@/lib/axios';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 const signupSchema = z
   .object({
@@ -38,16 +42,30 @@ const signupSchema = z
     confirmPassword: z.string().min(6, {
       message: 'A confirmação de senha deve conter pelo menos 6 caracteres',
     }),
-    // O campo de termos é um booleano que deve ser "true"
     terms: z.boolean().refine((value) => value === true, {
       message: 'Você deve aceitar os termos de serviço',
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'As senhas não coincidem',
+    path: ['confirmPassword'],
   });
 
 const SignupPage = () => {
+  const [user, setUser] = useState(null);
+  const signupMutation = useMutation({
+    mutationKey: ['signup'],
+    mutationFn: async (variables) => {
+      const response = await api.post('/api/users', {
+        first_name: variables.firstName,
+        last_name: variables.lastName,
+        email: variables.email,
+        password: variables.password,
+      });
+      return response.data;
+    },
+  });
+
   const form = useForm({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -60,9 +78,26 @@ const SignupPage = () => {
     },
   });
   const handleSubmit = (data) => {
-    console.log('Dados do formulário:', data);
+    signupMutation.mutate(data, {
+      onSuccess: (createdUser) => {
+        const accessToken = createdUser.tokens.accessToken;
+        const refreshToken = createdUser.tokens.refreshToken;
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        setUser(createdUser);
+        toast.success(
+          'Conta criada com sucesso! Faça login para acessar sua conta.'
+        );
+      },
+      onError: (error) => {
+        toast.error('Erro ao criar conta. Por favor, tente novamente.');
+        console.log('Erro ao criar conta:', error);
+      },
+    });
   };
-
+  if (user) {
+    return <h1>Olá, {user.first_name}</h1>;
+  }
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center gap-3">
       <Form {...form}>
@@ -148,6 +183,7 @@ const SignupPage = () => {
                   </FormItem>
                 )}
               />
+              {/* TERMOS DE USO */}
               <FormField
                 control={form.control}
                 name="terms"
