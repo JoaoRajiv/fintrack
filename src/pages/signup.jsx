@@ -13,7 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import {
   Form,
   FormControl,
@@ -25,7 +25,7 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const signupSchema = z
   .object({
@@ -56,7 +56,7 @@ const SignupPage = () => {
   const signupMutation = useMutation({
     mutationKey: ['signup'],
     mutationFn: async (variables) => {
-      const response = await api.post('/api/users', {
+      const response = await api.post('/users', {
         first_name: variables.firstName,
         last_name: variables.lastName,
         email: variables.email,
@@ -77,6 +77,7 @@ const SignupPage = () => {
       terms: false,
     },
   });
+
   const handleSubmit = (data) => {
     signupMutation.mutate(data, {
       onSuccess: (createdUser) => {
@@ -95,9 +96,42 @@ const SignupPage = () => {
       },
     });
   };
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (!accessToken && !refreshToken) return;
+        const response = await api.get('/users/me', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setUser(response.data);
+      } catch (error) {
+        console.log('Erro ao obter usuário:', error);
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+      }
+    };
+    init();
+  }, []);
+
   if (user) {
-    return <h1>Olá, {user.first_name}</h1>;
+    return (
+      <div className="flex h-screen w-screen flex-col items-center justify-center gap-3">
+        <h1 className="text-2xl font-bold">Bem-vindo, {user.first_name}!</h1>
+        <p className="text-muted-foreground">
+          Sua conta foi criada com sucesso. Você já pode acessar o dashboard.
+        </p>
+        <Button variant="outline" onClick={() => setUser(null)}>
+          Sair
+        </Button>
+      </div>
+    );
   }
+
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center gap-3">
       <Form {...form}>
