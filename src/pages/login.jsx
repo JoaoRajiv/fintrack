@@ -17,10 +17,11 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { AuthContext } from '@/context/auth';
 import api from '@/lib/axios';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
@@ -36,6 +37,7 @@ const signupSchema = z.object({
 });
 
 const LoginPage = () => {
+  const { user: userTest, login } = useContext(AuthContext);
   const [user, setUser] = useState(null);
 
   const form = useForm({

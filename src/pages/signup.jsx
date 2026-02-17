@@ -1,4 +1,4 @@
-import { data, Link } from 'react-router';
+import { Link } from 'react-router';
 import PasswordInput from '@/components/password-input';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,7 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { set, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import {
   Form,
   FormControl,
@@ -22,10 +22,8 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { useMutation } from '@tanstack/react-query';
-import api from '@/lib/axios';
-import { toast } from 'sonner';
-import { useEffect, useState } from 'react';
+import { AuthContext } from '@/context/auth';
+import { useContext } from 'react';
 
 const signupSchema = z
   .object({
@@ -52,19 +50,7 @@ const signupSchema = z
   });
 
 const SignupPage = () => {
-  const [user, setUser] = useState(null);
-  const signupMutation = useMutation({
-    mutationKey: ['signup'],
-    mutationFn: async (variables) => {
-      const response = await api.post('/users', {
-        first_name: variables.firstName,
-        last_name: variables.lastName,
-        email: variables.email,
-        password: variables.password,
-      });
-      return response.data;
-    },
-  });
+  const { user, signup, logout } = useContext(AuthContext);
 
   const form = useForm({
     resolver: zodResolver(signupSchema),
@@ -79,44 +65,8 @@ const SignupPage = () => {
   });
 
   const handleSubmit = (data) => {
-    signupMutation.mutate(data, {
-      onSuccess: (createdUser) => {
-        const accessToken = createdUser.tokens.accessToken;
-        const refreshToken = createdUser.tokens.refreshToken;
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
-        setUser(createdUser);
-        toast.success(
-          'Conta criada com sucesso! Faça login para acessar sua conta.'
-        );
-      },
-      onError: (error) => {
-        toast.error('Erro ao criar conta. Por favor, tente novamente.');
-        console.log('Erro ao criar conta:', error);
-      },
-    });
+    signup(data);
   };
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const accessToken = localStorage.getItem('accessToken');
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (!accessToken && !refreshToken) return;
-        const response = await api.get('/users/me', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setUser(response.data);
-      } catch (error) {
-        console.log('Erro ao obter usuário:', error);
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-      }
-    };
-    init();
-  }, []);
 
   if (user) {
     return (
@@ -125,7 +75,7 @@ const SignupPage = () => {
         <p className="text-muted-foreground">
           Sua conta foi criada com sucesso. Você já pode acessar o dashboard.
         </p>
-        <Button variant="outline" onClick={() => setUser(null)}>
+        <Button variant="outline" onClick={logout}>
           Sair
         </Button>
       </div>
@@ -222,7 +172,7 @@ const SignupPage = () => {
                 control={form.control}
                 name="terms"
                 render={({ field }) => (
-                  <FormItem className="items-top flex space-x-2 space-y-0">
+                  <FormItem className="flex items-center space-x-2 space-y-2">
                     <FormControl>
                       <Checkbox
                         checked={field.value}
