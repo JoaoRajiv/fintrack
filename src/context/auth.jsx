@@ -1,4 +1,8 @@
-import api from '@/lib/axios';
+import {
+  LOCAL_STORAGE_ACCESS_TOKEN_KEY,
+  LOCAL_STORAGE_REFRESH_TOKEN_KEY,
+} from '@/constants/local-storage';
+import { api } from '@/lib/axios';
 import { useMutation } from '@tanstack/react-query';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -12,9 +16,6 @@ export const AuthContext = createContext({
 });
 
 export const useAuthContext = () => useContext(AuthContext);
-
-const LOCAL_STORAGE_ACCESS_TOKEN_KEY = 'accessToken';
-const LOCAL_STORAGE_REFRESH_TOKEN_KEY = 'refreshToken';
 
 const setTokens = (tokens) => {
   localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY, tokens.accessToken);
@@ -100,12 +101,7 @@ export const AuthContextProvider = ({ children }) => {
           LOCAL_STORAGE_REFRESH_TOKEN_KEY
         );
         if (!accessToken && !refreshToken) return;
-        const response = await api.get('/users/me', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        console.log('Resposta da verificação de autenticação:', response);
+        const response = await api.get('/users/me');
         setUser(response.data);
       } catch (error) {
         console.log('Erro ao verificar autenticação:', error);
