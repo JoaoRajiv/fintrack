@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { Link, Navigate } from 'react-router';
 import PasswordInput from '@/components/password-input';
 import { Button } from '@/components/ui/button';
 import {
@@ -50,7 +50,7 @@ const signupSchema = z
   });
 
 const SignupPage = () => {
-  const { user, signup, logout } = useContext(AuthContext);
+  const { user, signup, logout, isInitializing } = useContext(AuthContext);
 
   const form = useForm({
     resolver: zodResolver(signupSchema),
@@ -69,18 +69,16 @@ const SignupPage = () => {
     signup(data);
   };
 
-  if (user) {
+  if (isInitializing) {
     return (
-      <div className="flex h-screen w-screen flex-col items-center justify-center gap-3">
-        <h1 className="text-2xl font-bold">Bem-vindo, {user.first_name}!</h1>
-        <p className="text-muted-foreground">
-          Sua conta foi criada com sucesso. Você já pode acessar o dashboard.
-        </p>
-        <Button variant="outline" onClick={logout}>
-          Sair
-        </Button>
+      <div className="flex h-screen w-screen items-center justify-center">
+        Carregando...
       </div>
     );
+  }
+
+  if (user) {
+    return <Navigate to="/" replace />;
   }
 
   return (

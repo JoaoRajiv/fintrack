@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 
 export const AuthContext = createContext({
   user: null,
+  isInitializing: true,
   login: () => {},
   signup: () => {},
 });
@@ -14,9 +15,9 @@ export const useAuthContext = () => useContext(AuthContext);
 const LOCAL_STORAGE_ACCESS_TOKEN_KEY = 'accessToken';
 const LOCAL_STORAGE_REFRESH_TOKEN_KEY = 'refreshToken';
 
-const setTokens = (accessToken, refreshToken) => {
-  localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY, accessToken);
-  localStorage.setItem(LOCAL_STORAGE_REFRESH_TOKEN_KEY, refreshToken);
+const setTokens = (tokens) => {
+  localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY, tokens.accessToken);
+  localStorage.setItem(LOCAL_STORAGE_REFRESH_TOKEN_KEY, tokens.refreshToken);
 };
 
 const removeTokens = () => {
@@ -26,6 +27,7 @@ const removeTokens = () => {
 
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   const signupMutation = useMutation({
     mutationKey: ['signup'],
@@ -89,6 +91,7 @@ export const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     const init = async () => {
       try {
+        setIsInitializing(true);
         const accessToken = localStorage.getItem(
           LOCAL_STORAGE_ACCESS_TOKEN_KEY
         );
@@ -101,16 +104,22 @@ export const AuthContextProvider = ({ children }) => {
             Authorization: `Bearer ${accessToken}`,
           },
         });
+        console.log('Resposta da verificação de autenticação:', response);
         setUser(response.data);
       } catch (error) {
+        console.log('Erro ao verificar autenticação:', error);
         removeTokens();
+      } finally {
+        setIsInitializing(false);
       }
     };
     init();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout }}>
+    <AuthContext.Provider
+      value={{ user, login, signup, logout, isInitializing }}
+    >
       {children}
     </AuthContext.Provider>
   );

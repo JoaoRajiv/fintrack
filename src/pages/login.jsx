@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { useAuthContext } from '@/context/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router';
+import { Link, Navigate } from 'react-router';
 import z from 'zod';
 
 const signupSchema = z.object({
@@ -33,7 +33,7 @@ const signupSchema = z.object({
 });
 
 const LoginPage = () => {
-  const { user, login, logout } = useAuthContext();
+  const { user, login, isInitializing } = useAuthContext();
 
   const form = useForm({
     resolver: zodResolver(signupSchema),
@@ -47,19 +47,16 @@ const LoginPage = () => {
     login(data);
   };
 
-  if (user) {
+  if (isInitializing) {
     return (
-      <div className="flex h-screen w-screen flex-col items-center justify-center gap-3">
-        <h1 className="text-2xl font-bold">Bem-vindo, {user.first_name}!</h1>
-        <p className="text-muted-foreground">
-          Você entrou na sua conta com sucesso. Agora você pode acessar o
-          dashboard.
-        </p>
-        <Button variant="outline" onClick={logout}>
-          Sair
-        </Button>
+      <div className="flex h-screen w-screen items-center justify-center">
+        Carregando...
       </div>
     );
+  }
+
+  if (user) {
+    return <Navigate to="/" replace />;
   }
 
   return (
