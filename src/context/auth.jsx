@@ -44,8 +44,32 @@ export const AuthContextProvider = ({ children }) => {
     });
   };
 
-  const login = () => {
-    // Implementar lógica de login aqui
+  const loginMutation = useMutation({
+    mutationKey: ['login'],
+    mutationFn: async (variables) => {
+      const response = await api.post('/users/login', {
+        email: variables.email,
+        password: variables.password,
+      });
+      return response.data;
+    },
+  });
+
+  const login = (data) => {
+    loginMutation.mutate(data, {
+      onSuccess: (loggedUser) => {
+        const accessToken = loggedUser.tokens.accessToken;
+        const refreshToken = loggedUser.tokens.refreshToken;
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        setUser(loggedUser);
+        toast.success('Login feito com sucesso.');
+      },
+      onError: (error) => {
+        toast.error('Email ou senha inválidos, tente novamente.');
+        console.log('Erro ao entrar na conta:', error);
+      },
+    });
   };
 
   const logout = () => {

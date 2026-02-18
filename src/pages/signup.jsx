@@ -65,6 +65,7 @@ const SignupPage = () => {
   });
 
   const handleSubmit = (data) => {
+    console.log('Dados do formulário:', data);
     signup(data);
   };
 

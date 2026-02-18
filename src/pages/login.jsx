@@ -20,8 +20,7 @@ import { Input } from '@/components/ui/input';
 import { AuthContext } from '@/context/auth';
 import api from '@/lib/axios';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
@@ -37,8 +36,7 @@ const signupSchema = z.object({
 });
 
 const LoginPage = () => {
-  const { user: userTest, login } = useContext(AuthContext);
-  const [user, setUser] = useState(null);
+  const { user, login, logout } = useContext(AuthContext);
 
   const form = useForm({
     resolver: zodResolver(signupSchema),
@@ -48,32 +46,8 @@ const LoginPage = () => {
     },
   });
 
-  const loginMutation = useMutation({
-    mutationKey: ['login'],
-    mutationFn: async (variables) => {
-      const response = await api.post('/users/login', {
-        email: variables.email,
-        password: variables.password,
-      });
-      return response.data;
-    },
-  });
-
   const handleSubmit = (data) => {
-    loginMutation.mutate(data, {
-      onSuccess: (loggedUser) => {
-        const accessToken = loggedUser.tokens.accessToken;
-        const refreshToken = loggedUser.tokens.refreshToken;
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
-        setUser(loggedUser);
-        toast.success('Login feito com sucesso.');
-      },
-      onError: (error) => {
-        toast.error('Email ou senha inválidos, tente novamente.');
-        console.log('Erro ao entrar na conta:', error);
-      },
-    });
+    login(data);
   };
 
   const handleLogout = () => {
@@ -112,7 +86,7 @@ const LoginPage = () => {
           Você entrou na sua conta com sucesso. Agora você pode acessar o
           dashboard.
         </p>
-        <Button variant="outline" onClick={handleLogout}>
+        <Button variant="outline" onClick={logout}>
           Sair
         </Button>
       </div>
