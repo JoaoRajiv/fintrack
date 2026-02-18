@@ -18,9 +18,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useAuthContext } from '@/context/auth';
-import api from '@/lib/axios';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router';
 import z from 'zod';
@@ -48,27 +46,6 @@ const LoginPage = () => {
   const handleSubmit = (data) => {
     login(data);
   };
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const accessToken = localStorage.getItem('accessToken');
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (!accessToken && !refreshToken) return;
-        const response = await api.get('/users/me', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setUser(response.data);
-      } catch (error) {
-        console.log('Erro ao obter usuário:', error);
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-      }
-    };
-    init();
-  }, []);
 
   if (user) {
     return (
