@@ -17,13 +17,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { AuthContext } from '@/context/auth';
+import { useAuthContext } from '@/context/auth';
 import api from '@/lib/axios';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router';
-import { toast } from 'sonner';
 import z from 'zod';
 
 const signupSchema = z.object({
@@ -36,7 +35,7 @@ const signupSchema = z.object({
 });
 
 const LoginPage = () => {
-  const { user, login, logout } = useContext(AuthContext);
+  const { user, login, logout } = useAuthContext();
 
   const form = useForm({
     resolver: zodResolver(signupSchema),
@@ -48,13 +47,6 @@ const LoginPage = () => {
 
   const handleSubmit = (data) => {
     login(data);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    setUser(null);
-    toast.success('Logout feito com sucesso.');
   };
 
   useEffect(() => {
