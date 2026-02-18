@@ -2,7 +2,10 @@ import { LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/constants/local-storage';
 import axios from 'axios';
 
 export const api = axios.create({
-  baseURL: 'https://fullstackclub-finance-dashboard-api.onrender.com/api',
+  baseURL: '/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 api.interceptors.request.use((request) => {
@@ -10,6 +13,6 @@ api.interceptors.request.use((request) => {
   if (!accessToken) {
     return request;
   }
-  request.headers['Authorization'] = `Bearer ${accessToken}`;
+  request.headers.Authorization = `Bearer ${accessToken}`;
   return request;
 });

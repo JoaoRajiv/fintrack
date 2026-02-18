@@ -102,6 +102,7 @@ export const AuthContextProvider = ({ children }) => {
         );
         if (!accessToken && !refreshToken) return;
         const response = await api.get('/users/me');
+        console.log('Resposta da verificação de autenticação:', response);
         setUser(response.data);
       } catch (error) {
         console.log('Erro ao verificar autenticação:', error);
