@@ -18,7 +18,9 @@ const HomePage = () => {
   }
   return (
     <>
-      <h1>Olá, {user.first_name}!</h1>
+      <h1>
+        Olá, {user.firstName} {user.lastName}!
+      </h1>
       <Button onClick={signOut}>Sair</Button>
     </>
   );

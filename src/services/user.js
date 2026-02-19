@@ -8,13 +8,34 @@ export const UserService = {
       email: input.email,
       password: input.password,
     });
-    return response.data;
+    return {
+      id: response.data.id,
+      email: response.data.email,
+      firstName: response.data.first_name,
+      lastName: response.data.last_name,
+      tokens: response.data.tokens,
+    };
   },
   login: async (input) => {
     const response = await api.post('/users/login', {
       email: input.email,
       password: input.password,
     });
-    return response.data;
+    return {
+      id: response.data.id,
+      email: response.data.email,
+      firstName: response.data.first_name,
+      lastName: response.data.last_name,
+      tokens: response.data.tokens,
+    };
+  },
+  me: async () => {
+    const response = await api.get('/users/me');
+    return {
+      id: response.data.id,
+      email: response.data.email,
+      firstName: response.data.first_name,
+      lastName: response.data.last_name,
+    };
   },
 };
