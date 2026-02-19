@@ -3,7 +3,9 @@ import {
   LOCAL_STORAGE_REFRESH_TOKEN_KEY,
 } from '@/constants/local-storage';
 import { api } from '@/lib/axios';
+import { UserService } from '@/services/user';
 import { useMutation } from '@tanstack/react-query';
+import { User } from 'lucide-react';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -34,13 +36,8 @@ export const AuthContextProvider = ({ children }) => {
   const signupMutation = useMutation({
     mutationKey: ['signup'],
     mutationFn: async (variables) => {
-      const response = await api.post('/users', {
-        first_name: variables.firstName,
-        last_name: variables.lastName,
-        email: variables.email,
-        password: variables.password,
-      });
-      return response.data;
+      const response = await UserService.signUp(variables);
+      return response;
     },
   });
 
