@@ -22,7 +22,7 @@ const setTokens = (tokens) => {
   localStorage.setItem(LOCAL_STORAGE_REFRESH_TOKEN_KEY, tokens.refreshToken);
 };
 
-const removeTokens = () => {
+export const removeTokens = () => {
   localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
   localStorage.removeItem(LOCAL_STORAGE_REFRESH_TOKEN_KEY);
 };
@@ -86,8 +86,8 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   const signOut = () => {
-    removeTokens();
     setUser(null);
+    removeTokens();
   };
 
   useEffect(() => {
@@ -102,7 +102,6 @@ export const AuthContextProvider = ({ children }) => {
         );
         if (!accessToken && !refreshToken) return;
         const response = await api.get('/users/me');
-        console.log('Resposta da verificação de autenticação:', response);
         setUser(response.data);
       } catch (error) {
         console.log('Erro ao verificar autenticação:', error);
