@@ -1,3 +1,4 @@
+import Header from '@/components/header';
 import { Button } from '@/components/ui/button';
 import { useAuthContext } from '@/context/auth';
 import { Loader2Icon } from 'lucide-react';
@@ -18,10 +19,7 @@ const HomePage = () => {
   }
   return (
     <>
-      <h1>
-        Olá, {user.firstName} {user.lastName}!
-      </h1>
-      <Button onClick={signOut}>Sair</Button>
+      <Header />
     </>
   );
 };
