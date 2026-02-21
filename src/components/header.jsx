@@ -28,7 +28,7 @@ export default function Header({}) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="space-x-1 px-1">
-                <Avatar className="rounded">
+                <Avatar className="h-8 w-8">
                   <AvatarImage src="https://github.com/shadcn.png" />
                   <AvatarFallback>
                     <p>

@@ -35,28 +35,29 @@ export const DatePickerWithRange = ({
             {value?.from ? (
               value.to ? (
                 <>
-                  {format(value.from, 'LLL dd, y', {
+                  {format(value.from, 'dd/LLL y', {
                     locale: ptBR,
                   })}{' '}
                   -{' '}
-                  {format(value.to, 'LLL dd, y', {
+                  {format(value.to, 'dd/LLL y', {
                     locale: ptBR,
                   })}
                 </>
               ) : (
-                format(value.from, 'LLL dd, y', {
+                format(value.from, 'dd/LLL y', {
                   locale: ptBR,
                 })
               )
             ) : (
               <span>{placeholder}</span>
             )}
+            <PlusIcon />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             initialFocus
-            mode="range"
+            mode=""
             defaultMonth={value?.from}
             selected={value}
             onSelect={onChange}
