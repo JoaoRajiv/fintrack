@@ -1,23 +1,36 @@
 import { useEffect, useState } from 'react';
 import { DatePickerWithRange } from './ui/date-picker-with-range';
-import { addMonths, format } from 'date-fns';
+import { addMonths, format, isValid } from 'date-fns';
 import { useNavigate, useSearchParams } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuthContext } from '@/context/auth';
 
+const getInitialDateState = (searchParams) => {
+  const defaultDate = {
+    from: new Date(),
+    to: addMonths(new Date(), 1),
+  };
+  const from = searchParams.get('from');
+  const to = searchParams.get('to');
+  if (!from || !to) {
+    return defaultDate;
+  }
+  const dateAreInvalid = !isValid(new Date(from)) || !isValid(new Date(to));
+  if (dateAreInvalid) {
+    return defaultDate;
+  }
+  return {
+    from: new Date(from + 'T00:00:00'),
+    to: new Date(to + 'T00:00:00'),
+  };
+};
+
 const DateSelection = () => {
-  const queryclient = useQueryClient();
   const [searchParams] = useSearchParams();
   const { user } = useAuthContext();
+  const queryclient = useQueryClient();
   const navigate = useNavigate();
-  const [date, setDate] = useState({
-    from: searchParams.get('from')
-      ? new Date(searchParams.get('from') + 'T00:00:00')
-      : new Date(),
-    to: searchParams.get('to')
-      ? new Date(searchParams.get('to') + 'T00:00:00')
-      : addMonths(new Date(), 1),
-  });
+  const [date, setDate] = useState(getInitialDateState(searchParams));
   // Sempre que o state "date" for atualizado, eu preciso persisti-lo na URL.
   useEffect(() => {
     if (!date?.from || !date?.to) return;
