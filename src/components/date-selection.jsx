@@ -23,10 +23,10 @@ const DateSelection = () => {
     if (!date?.from || !date?.to) return;
 
     const queryParams = new URLSearchParams();
-    queryParams.set('from', format(date.from, 'yyyy-MM-dd'));
-    queryParams.set('to', format(date.to, 'yyyy-MM-dd'));
+    const from = queryParams.set('from', format(date.from, 'yyyy-MM-dd'));
+    const to = queryParams.set('to', format(date.to, 'yyyy-MM-dd'));
     queryclient.invalidateQueries({
-      queryKey: ['balance', user.id],
+      queryKey: ['balance', user.id, from, to],
     });
     navigate(`/?${queryParams.toString()}`);
   }, [date, navigate, user.id, queryclient]);
