@@ -1,4 +1,5 @@
 import {
+  Loader2Icon,
   PiggyBankIcon,
   PlusIcon,
   TrendingDownIcon,
@@ -29,10 +30,15 @@ import { useForm } from 'react-hook-form';
 import { Input } from './ui/input';
 import { NumericFormat } from 'react-number-format';
 import { DatePicker } from './ui/date-picker';
+import { TransactionService } from '@/services/transaction';
+import { toast } from 'sonner';
+import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuthContext } from '@/context/auth';
 
 const formSchema = z.object({
   name: z.string().min(1, 'O nome é obrigatório.'),
-  amount: z.number(),
+  amount: z.number({ required_error: 'O valor é obrigatório.' }),
   date: z.date({ required_error: 'A data é obrigatória.' }),
   type: z.enum(['EARNING', 'EXPENSE', 'INVESTMENT'], {
     errorMap: () => ({
@@ -42,6 +48,22 @@ const formSchema = z.object({
 });
 
 const AddTransactionButton = () => {
+  const queryClient = useQueryClient();
+  const { user } = useAuthContext();
+  const { mutateAsync: createTransaction } = useMutation({
+    mutationKey: ['create-transaction'],
+    mutationFn: async (input) => {
+      await TransactionService.create(input);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['balance', user.id] });
+    },
+    onError: (error) => {
+      toast.error('Erro ao criar transação');
+      console.log(error);
+    },
+  });
+  const [dialogIsOpen, setDialogIsOpen] = useState(false);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -53,13 +75,21 @@ const AddTransactionButton = () => {
     shouldUnregister: true,
   });
 
-  const onSubmit = (data) => {
-    console.log('Dados da transação:', data);
+  const onSubmit = async (data) => {
+    try {
+      await createTransaction(data);
+      toast.success('Transação criada com sucesso!');
+      setDialogIsOpen(false);
+      form.reset();
+    } catch (error) {
+      toast.error('Erro ao criar transação');
+      console.log(error);
+    }
   };
 
   return (
     <>
-      <Dialog>
+      <Dialog open={dialogIsOpen} onOpenChange={setDialogIsOpen}>
         <DialogTrigger asChild>
           <Button>
             <PlusIcon />
@@ -188,14 +218,29 @@ const AddTransactionButton = () => {
                   </FormItem>
                 )}
               />
-              <DialogFooter className="space-x-4">
+              <DialogFooter className="flex flex-col gap-4 sm:flex-row">
                 <DialogClose asChild>
-                  <Button variant="outline" type="reset" className="w-full">
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    disabled={form.formState.isSubmitting}
+                  >
                     Cancelar
                   </Button>
                 </DialogClose>
-                <Button type="submit" className="w-full">
-                  Salvar
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting ? (
+                    <>
+                      <Loader2Icon className="h-4 w-4 animate-spin" />
+                      Adicionando...
+                    </>
+                  ) : (
+                    'Adicionar'
+                  )}
                 </Button>
               </DialogFooter>
             </form>
