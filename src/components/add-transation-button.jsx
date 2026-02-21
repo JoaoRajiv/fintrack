@@ -30,11 +30,12 @@ import { useForm } from 'react-hook-form';
 import { Input } from './ui/input';
 import { NumericFormat } from 'react-number-format';
 import { DatePicker } from './ui/date-picker';
-import { TransactionService } from '@/services/transaction';
+import { TransactionService } from '@/api/services/transaction';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthContext } from '@/context/auth';
+import { getUserBalanceQueryKey } from '@/api/hooks/user';
 
 const formSchema = z.object({
   name: z.string().min(1, 'O nome é obrigatório.'),
@@ -56,7 +57,11 @@ const AddTransactionButton = () => {
       await TransactionService.create(input);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['balance', user.id] });
+      queryClient.invalidateQueries({
+        queryKey: getUserBalanceQueryKey({
+          userId: user.id,
+        }),
+      });
     },
     onError: (error) => {
       toast.error('Erro ao criar transação');
