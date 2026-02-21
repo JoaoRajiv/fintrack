@@ -39,7 +39,7 @@ const Balance = () => {
         icon={<TrendingDownIcon className="text-primary-red" size={16} />}
       />
       <BalanceItem
-        label="Patrimônio"
+        label="Saldo"
         value={data?.balance ?? 0}
         icon={<PiggyBank className="text-primary-blue" size={16} />}
       />
