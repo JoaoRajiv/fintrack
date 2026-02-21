@@ -1,0 +1,24 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { TransactionService } from '../services/transaction';
+import { getUserBalanceQueryKey } from './user';
+import { useAuthContext } from '@/context/auth';
+
+export const createTransactionMutationKey = ['createTransaction'];
+
+export const useCreateTransaction = () => {
+  const queryClient = useQueryClient();
+  const { user } = useAuthContext();
+  return useMutation({
+    mutationKey: createTransactionMutationKey,
+    mutationFn: (input) => {
+      return TransactionService.create(input);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: getUserBalanceQueryKey({
+          userId: user.id,
+        }),
+      });
+    },
+  });
+};

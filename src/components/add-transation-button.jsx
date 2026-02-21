@@ -30,12 +30,11 @@ import { useForm } from 'react-hook-form';
 import { Input } from './ui/input';
 import { NumericFormat } from 'react-number-format';
 import { DatePicker } from './ui/date-picker';
-import { TransactionService } from '@/api/services/transaction';
 import { toast } from 'sonner';
 import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuthContext } from '@/context/auth';
-import { getUserBalanceQueryKey } from '@/api/hooks/user';
+import { useCreateTransaction } from '@/api/hooks/transaction';
 
 const formSchema = z.object({
   name: z.string().min(1, 'O nome é obrigatório.'),
@@ -49,25 +48,8 @@ const formSchema = z.object({
 });
 
 const AddTransactionButton = () => {
-  const queryClient = useQueryClient();
-  const { user } = useAuthContext();
-  const { mutateAsync: createTransaction } = useMutation({
-    mutationKey: ['create-transaction'],
-    mutationFn: async (input) => {
-      await TransactionService.create(input);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: getUserBalanceQueryKey({
-          userId: user.id,
-        }),
-      });
-    },
-    onError: (error) => {
-      toast.error('Erro ao criar transação');
-      console.log(error);
-    },
-  });
+  const { mutateAsync: createTransaction } = useCreateTransaction();
+
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
   const form = useForm({
     resolver: zodResolver(formSchema),
