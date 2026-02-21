@@ -7,6 +7,7 @@ import SignupPage from './pages/signup';
 import HomePage from './pages/home';
 import NotFoundPage from './pages/not-found';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Toaster } from './components/ui/sonner';
 import { AuthContextProvider } from './context/auth';
 
@@ -25,6 +26,7 @@ createRoot(document.getElementById('root')).render(
           </Routes>
         </BrowserRouter>
         <Toaster />
+        <ReactQueryDevtools initialIsOpen={false} />
       </AuthContextProvider>
     </QueryClientProvider>
   </StrictMode>

@@ -78,7 +78,9 @@ const AddTransactionButton = () => {
   const onSubmit = async (data) => {
     try {
       await createTransaction(data);
-      toast.success('Transação criada com sucesso!');
+      toast.success(
+        `Transação criada no dia ${data.date.toLocaleDateString()} com sucesso!`
+      );
       setDialogIsOpen(false);
       form.reset();
     } catch (error) {

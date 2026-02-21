@@ -20,6 +20,10 @@ const Balance = () => {
     queryFn: () => {
       return UserService.getBalance({ from, to });
     },
+    // Refetch a cada 5 minutos
+    staleTime: 1000 * 60 * 5,
+    // Só fazer a requisição se tiver o from, to e user.id
+    enabled: Boolean(from) && Boolean(to) && Boolean(user?.id),
   });
   return (
     <div className="mt-6 grid grid-cols-2 grid-rows-2 gap-6">
