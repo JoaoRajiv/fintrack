@@ -12,6 +12,7 @@ import { Button } from './ui/button';
 import { useAuthContext } from '@/context/auth';
 import { ChevronDownIcon, LogOutIcon } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Link } from 'react-router';
 
 export default function Header({}) {
   const { user, signOut } = useAuthContext();
@@ -19,13 +20,15 @@ export default function Header({}) {
     <Card>
       <CardContent className="flex items-center justify-between px-8 py-4">
         <div>
-          <img src={logo} alt="FinTrack Logo" />
+          <Link to="/">
+            <img src={logo} alt="FinTrack Logo" />
+          </Link>
         </div>
         <div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="space-x-1">
-                <Avatar className="h-8 w-8 rounded">
+              <Button variant="outline" className="space-x-1 px-1">
+                <Avatar className="rounded">
                   <AvatarImage src="https://github.com/shadcn.png" />
                   <AvatarFallback>
                     <p>
