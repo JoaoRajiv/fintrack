@@ -24,43 +24,19 @@ import {
   FormLabel,
   FormMessage,
 } from './ui/form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
 import { Input } from './ui/input';
 import { NumericFormat } from 'react-number-format';
 import { DatePicker } from './ui/date-picker';
 import { toast } from 'sonner';
 import { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { useAuthContext } from '@/context/auth';
 import { useCreateTransaction } from '@/api/hooks/transaction';
-
-const formSchema = z.object({
-  name: z.string().min(1, 'O nome é obrigatório.'),
-  amount: z.number({ required_error: 'O valor é obrigatório.' }),
-  date: z.date({ required_error: 'A data é obrigatória.' }),
-  type: z.enum(['EARNING', 'EXPENSE', 'INVESTMENT'], {
-    errorMap: () => ({
-      message: 'O tipo deve ser Ganho, Gasto ou Investimento',
-    }),
-  }),
-});
+import { useCreateTransactionForm } from '@/forms/hooks/transaction';
 
 const AddTransactionButton = () => {
   const { mutateAsync: createTransaction } = useCreateTransaction();
-
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
-  const form = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: '',
-      amount: undefined,
-      date: new Date(),
-      type: 'EARNING',
-    },
-    shouldUnregister: true,
-  });
+
+  const form = useCreateTransactionForm();
 
   const onSubmit = async (data) => {
     try {
@@ -119,7 +95,7 @@ const AddTransactionButton = () => {
                         {...field}
                         getInputRef={field.ref}
                         customInput={Input}
-                        placeholder="Digite o valor da transação"
+                        placeholder="Digite o valor da transação."
                         thousandSeparator="."
                         decimalSeparator=","
                         prefix="R$ "
