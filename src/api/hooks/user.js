@@ -22,3 +22,27 @@ export const useGetUserBalance = (from, to) => {
     enabled: Boolean(from) && Boolean(to) && Boolean(user?.id),
   });
 };
+
+export const signupMutationKey = ['signup'];
+
+export const useSignup = () => {
+  useMutation({
+    mutationKey: signupMutationKey,
+    mutationFn: async (variables) => {
+      const response = await UserService.signUp(variables);
+      return response;
+    },
+  });
+};
+
+export const loginMutationKey = ['login'];
+
+export const useLogin = () => {
+  useMutation({
+    mutationKey: ['login'],
+    mutationFn: async (variables) => {
+      const response = await UserService.login(variables);
+      return response;
+    },
+  });
+};

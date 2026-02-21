@@ -6,6 +6,7 @@ import { UserService } from '@/api/services/user';
 import { useMutation } from '@tanstack/react-query';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { useLogin, useSignup } from '@/api/hooks/user';
 
 export const AuthContext = createContext({
   user: null,
@@ -31,13 +32,7 @@ export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isInitializing, setIsInitializing] = useState(true);
 
-  const signupMutation = useMutation({
-    mutationKey: ['signup'],
-    mutationFn: async (variables) => {
-      const response = await UserService.signUp(variables);
-      return response;
-    },
-  });
+  const signupMutation = useSignup();
 
   const signup = (data) => {
     signupMutation.mutate(data, {
@@ -55,13 +50,7 @@ export const AuthContextProvider = ({ children }) => {
     });
   };
 
-  const loginMutation = useMutation({
-    mutationKey: ['login'],
-    mutationFn: async (variables) => {
-      const response = await UserService.login(variables);
-      return response;
-    },
-  });
+  const loginMutation = useLogin();
 
   const login = (data) => {
     loginMutation.mutate(data, {
