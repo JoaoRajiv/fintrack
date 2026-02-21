@@ -2,7 +2,7 @@
 
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, PlusIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -51,13 +51,12 @@ export const DatePickerWithRange = ({
             ) : (
               <span>{placeholder}</span>
             )}
-            <PlusIcon />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             initialFocus
-            mode=""
+            mode="range"
             defaultMonth={value?.from}
             selected={value}
             onSelect={onChange}
