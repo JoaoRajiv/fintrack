@@ -17,7 +17,7 @@ const HomePage = () => {
     );
   }
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" />;
   }
   return (
     <>

@@ -27,9 +27,7 @@ const LoginPage = () => {
 
   const { form } = useLoginForm();
 
-  const handleSubmit = (data) => {
-    login(data);
-  };
+  const handleSubmit = (data) => login(data);
 
   if (isInitializing) {
     return (
@@ -40,7 +38,7 @@ const LoginPage = () => {
   }
 
   if (user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/" />;
   }
 
   return (

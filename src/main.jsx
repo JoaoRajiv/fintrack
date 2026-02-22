@@ -16,7 +16,7 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AuthContextProvider>
+      <AuthContextProvider value={{ isLoggingIn: false }}>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<HomePage />} />

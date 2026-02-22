@@ -29,9 +29,7 @@ const SignupPage = () => {
 
   const form = useSignupForm();
 
-  const handleSubmit = (data) => {
-    signup(data);
-  };
+  const handleSubmit = (data) => signup(data);
 
   if (isInitializing) {
     return (
@@ -42,7 +40,7 @@ const SignupPage = () => {
   }
 
   if (user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/" />;
   }
 
   return (

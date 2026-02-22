@@ -47,8 +47,8 @@ export const AuthContextProvider = ({ children }) => {
         const response = await UserService.me();
         setUser(response);
       } catch (error) {
+        setUser(null);
         console.log('Erro ao verificar autenticação:', error);
-        removeTokens();
       } finally {
         setIsInitializing(false);
       }
