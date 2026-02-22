@@ -11,9 +11,6 @@ import {
 } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
 import {
   Form,
   FormControl,
@@ -24,48 +21,15 @@ import {
 } from '@/components/ui/form';
 import { AuthContext } from '@/context/auth';
 import { useContext } from 'react';
-
-const signupSchema = z
-  .object({
-    firstName: z.string().min(1, { message: 'O primeiro nome é obrigatório' }),
-    lastName: z.string().min(1, { message: 'O sobrenome é obrigatório' }),
-    email: z
-      .string()
-      .email({ message: 'Email inválido' })
-      .trim()
-      .min(1, { message: 'O email é obrigatório' }),
-    password: z
-      .string()
-      .min(6, { message: 'A senha deve conter pelo menos 6 caracteres' }),
-    confirmPassword: z.string().min(6, {
-      message: 'A confirmação de senha deve conter pelo menos 6 caracteres',
-    }),
-    terms: z.boolean().refine((value) => value === true, {
-      message: 'Você deve aceitar os termos de serviço',
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'As senhas não coincidem',
-    path: ['confirmPassword'],
-  });
+import { useSignupForm } from '@/forms/hooks/user';
+import { Loader2Icon } from 'lucide-react';
 
 const SignupPage = () => {
-  const { user, signup, logout, isInitializing } = useContext(AuthContext);
+  const { user, signup, isInitializing } = useContext(AuthContext);
 
-  const form = useForm({
-    resolver: zodResolver(signupSchema),
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      terms: false,
-    },
-  });
+  const form = useSignupForm();
 
   const handleSubmit = (data) => {
-    console.log('Dados do formulário:', data);
     signup(data);
   };
 
@@ -200,7 +164,12 @@ const SignupPage = () => {
               />
             </CardContent>
             <CardFooter>
-              <Button className="w-full">Criar conta</Button>
+              <Button className="w-full" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting && (
+                  <Loader2Icon className="animate-spin" />
+                )}
+                Criar conta
+              </Button>
             </CardFooter>
           </Card>
         </form>
