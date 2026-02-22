@@ -2,6 +2,7 @@ import AddTransactionButton from '@/components/add-transation-button';
 import Balance from '@/components/balance';
 import DateSelection from '@/components/date-selection';
 import Header from '@/components/header';
+import TransactionTable from '@/components/transactio-table';
 import { useAuthContext } from '@/context/auth';
 import { Loader2Icon } from 'lucide-react';
 import { Navigate } from 'react-router';
@@ -34,6 +35,7 @@ const HomePage = () => {
         <div className="grid grid-cols-[2fr,1fr]">
           <Balance />
         </div>
+        <TransactionTable />
       </div>
     </>
   );
