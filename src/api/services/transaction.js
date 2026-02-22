@@ -1,4 +1,5 @@
 import { api } from '@/lib/axios';
+import queryString from 'query-string';
 
 export const TransactionService = {
   /**
@@ -21,5 +22,9 @@ export const TransactionService = {
    * @param {string} input.to - Data Final (yyyy-MM-dd).
    * @returns {} - Lista de transações do usuário.
    */
-  list: async () => {},
+  getAll: async (input) => {
+    const query = queryString.stringify({ from: input.from, to: input.to });
+    const response = await api.get(`/transactions/me?${query}`);
+    return response.data;
+  },
 };
