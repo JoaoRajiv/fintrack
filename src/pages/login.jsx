@@ -18,30 +18,14 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useAuthContext } from '@/context/auth';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useLoginForm } from '@/forms/hooks/user';
+import { Loader2Icon } from 'lucide-react';
 import { Link, Navigate } from 'react-router';
-import z from 'zod';
-
-const signupSchema = z.object({
-  email: z
-    .string()
-    .email({ message: 'Email inválido' })
-    .trim()
-    .min(1, { message: 'O email é obrigatório' }),
-  password: z.string(),
-});
 
 const LoginPage = () => {
   const { user, login, isInitializing } = useAuthContext();
 
-  const form = useForm({
-    resolver: zodResolver(signupSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  });
+  const { form } = useLoginForm();
 
   const handleSubmit = (data) => {
     login(data);
@@ -101,7 +85,12 @@ const LoginPage = () => {
               />
             </CardContent>
             <CardFooter>
-              <Button className="w-full">Entrar</Button>
+              <Button className="w-full" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting && (
+                  <Loader2Icon className="animate-spin" />
+                )}
+                Fazer login
+              </Button>
             </CardFooter>
           </Card>
         </form>

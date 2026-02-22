@@ -26,7 +26,7 @@ export const useGetUserBalance = (from, to) => {
 export const signupMutationKey = ['signup'];
 
 export const useSignup = () => {
-  useMutation({
+  return useMutation({
     mutationKey: signupMutationKey,
     mutationFn: async (variables) => {
       const response = await UserService.signUp(variables);
@@ -38,8 +38,8 @@ export const useSignup = () => {
 export const loginMutationKey = ['login'];
 
 export const useLogin = () => {
-  useMutation({
-    mutationKey: ['login'],
+  return useMutation({
+    mutationKey: loginMutationKey,
     mutationFn: async (variables) => {
       const response = await UserService.login(variables);
       return response;

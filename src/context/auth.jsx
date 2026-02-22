@@ -3,7 +3,6 @@ import {
   LOCAL_STORAGE_REFRESH_TOKEN_KEY,
 } from '@/constants/local-storage';
 import { UserService } from '@/api/services/user';
-import { useMutation } from '@tanstack/react-query';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useLogin, useSignup } from '@/api/hooks/user';
@@ -31,45 +30,8 @@ export const removeTokens = () => {
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isInitializing, setIsInitializing] = useState(true);
-
   const signupMutation = useSignup();
-
-  const signup = (data) => {
-    signupMutation.mutate(data, {
-      onSuccess: (createdUser) => {
-        setUser(createdUser);
-        setTokens(createdUser.tokens);
-        toast.success(
-          'Conta criada com sucesso! Faça login para acessar sua conta.'
-        );
-      },
-      onError: (error) => {
-        toast.error('Erro ao criar conta. Por favor, tente novamente.');
-        console.log('Erro ao criar conta:', error);
-      },
-    });
-  };
-
   const loginMutation = useLogin();
-
-  const login = (data) => {
-    loginMutation.mutate(data, {
-      onSuccess: (loggedUser) => {
-        setUser(loggedUser);
-        setTokens(loggedUser.tokens);
-        toast.success('Login feito com sucesso.');
-      },
-      onError: (error) => {
-        toast.error('Email ou senha inválidos, tente novamente.');
-        console.log('Erro ao entrar na conta:', error);
-      },
-    });
-  };
-
-  const signOut = () => {
-    setUser(null);
-    removeTokens();
-  };
 
   useEffect(() => {
     const init = async () => {
@@ -93,6 +55,37 @@ export const AuthContextProvider = ({ children }) => {
     };
     init();
   }, []);
+
+  const signup = async (data) => {
+    try {
+      const createdUser = await signupMutation.mutateAsync(data);
+      setUser(createdUser);
+      setTokens(createdUser.tokens);
+      toast.success(
+        'Conta criada com sucesso! Faça login para acessar sua conta.'
+      );
+    } catch (error) {
+      toast.error('Erro ao criar conta. Por favor, tente novamente.');
+      console.log('Erro ao criar conta:', error);
+    }
+  };
+
+  const login = async (data) => {
+    try {
+      const loggedUser = await loginMutation.mutateAsync(data);
+      setUser(loggedUser);
+      setTokens(loggedUser.tokens);
+      toast.success('Login feito com sucesso.');
+    } catch (error) {
+      toast.error('Erro ao entrar na conta. Verifique suas credenciais.');
+      console.log('Erro ao entrar na conta:', error);
+    }
+  };
+
+  const signOut = () => {
+    setUser(null);
+    removeTokens();
+  };
 
   return (
     <AuthContext.Provider
