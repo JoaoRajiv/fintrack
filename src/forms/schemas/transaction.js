@@ -10,3 +10,7 @@ export const createTransactionFormSchema = z.object({
     }),
   }),
 });
+
+export const editTransactionFormSchema = createTransactionFormSchema.extend({
+  id: z.string({ required_error: 'O ID é obrigatório.' }),
+});
