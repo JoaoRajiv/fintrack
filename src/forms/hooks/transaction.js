@@ -2,13 +2,13 @@ import { useForm } from 'react-hook-form';
 import {
   createTransactionFormSchema,
   editTransactionFormSchema,
-  // editTransactionFormSchema,
 } from '../schemas/transaction';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   useCreateTransaction,
   useEditTransaction,
 } from '@/api/hooks/transaction';
+import { useEffect } from 'react';
 
 export const useCreateTransactionForm = ({ onSuccess, onError }) => {
   const { mutateAsync: createTransaction } = useCreateTransaction();
@@ -34,25 +34,30 @@ export const useCreateTransactionForm = ({ onSuccess, onError }) => {
   return { form, onSubmit };
 };
 
+const getEditTransacionFormDefaultValues = (transaction) => ({
+  name: transaction.name,
+  amount: parseFloat(transaction.amount),
+  date: new Date(transaction.date),
+  type: transaction.type,
+});
+
 export const useEditTransactionForm = ({ transaction, onSuccess, onError }) => {
   const { mutateAsync: editTransaction } = useEditTransaction();
   const form = useForm({
     resolver: zodResolver(editTransactionFormSchema),
-    defaultValues: {
-      id: transaction.id,
-      name: transaction.name,
-      amount: transaction.amount,
-      date: transaction.date,
-      type: transaction.type,
-    },
+    defaultValues: getEditTransacionFormDefaultValues(transaction),
     shouldUnregister: true,
   });
+  useEffect(() => {
+    form.reset(getEditTransacionFormDefaultValues(transaction));
+    form.setValue('id', transaction.id);
+  }, [form, transaction.id]);
   const onSubmit = async (data) => {
     await editTransaction(data);
     try {
       onSuccess();
     } catch (error) {
-      console.log('Error creating transaction:', error);
+      console.log('Error editing transaction:', error);
       onError();
     }
   };

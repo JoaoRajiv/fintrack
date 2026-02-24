@@ -29,28 +29,20 @@ import { NumericFormat } from 'react-number-format';
 import { DatePicker } from './ui/date-picker';
 import { toast } from 'sonner';
 import { useState } from 'react';
-import { useCreateTransaction } from '@/api/hooks/transaction';
 import { useCreateTransactionForm } from '@/forms/hooks/transaction';
 
 const AddTransactionButton = () => {
-  const { mutateAsync: createTransaction } = useCreateTransaction();
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
 
-  const form = useCreateTransactionForm();
-
-  const onSubmit = async (data) => {
-    try {
-      await createTransaction(data);
-      toast.success(
-        `Transação criada no dia ${data.date.toLocaleDateString()} com sucesso!`
-      );
+  const { form, onSubmit } = useCreateTransactionForm({
+    onSuccess: () => {
+      toast.success('Transação criada com sucesso!');
       setDialogIsOpen(false);
-      form.reset();
-    } catch (error) {
+    },
+    onError: () => {
       toast.error('Erro ao criar transação');
-      console.log(error);
-    }
-  };
+    },
+  });
 
   return (
     <>
