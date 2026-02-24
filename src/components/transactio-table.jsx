@@ -5,8 +5,9 @@ import { DataTable } from './ui/data-table';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { formatCurrency } from '@/helpers/currency';
-import { CircleIcon } from 'lucide-react';
+import { CircleIcon, ExternalLinkIcon } from 'lucide-react';
 import TransactionTypeBadge from './transaction-type-badge';
+import { Button } from './ui/button';
 
 const columns = [
   {
@@ -39,6 +40,13 @@ const columns = [
   {
     accessorKey: 'actions',
     header: 'Ações',
+    cell: ({ row: { original: transaction } }) => {
+      return (
+        <Button variant="ghost" size="sm">
+          <ExternalLinkIcon />
+        </Button>
+      );
+    },
   },
 ];
 
