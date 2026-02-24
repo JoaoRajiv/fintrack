@@ -1,5 +1,6 @@
 import { WalletIcon } from 'lucide-react';
 import { Card, CardContent } from './ui/card';
+import { formatCurrency } from '@/helpers/currency';
 
 const BalanceItem = ({ label, value, icon }) => {
   return (
@@ -13,12 +14,7 @@ const BalanceItem = ({ label, value, icon }) => {
 
           <p className="text-sm text-muted-foreground">{label}</p>
         </div>
-        <h3 className="text-2xl font-semibold">
-          {new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-          }).format(value ?? 0)}
-        </h3>
+        <h3 className="text-2xl font-semibold">{formatCurrency(value)}</h3>
       </CardContent>
     </Card>
   );
