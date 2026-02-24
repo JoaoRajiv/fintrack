@@ -10,17 +10,13 @@ export const useCreateTransaction = () => {
   const { user } = useAuthContext();
   return useMutation({
     mutationKey: createTransactionMutationKey,
-    mutationFn: (input) => {
-      return TransactionService.create(input);
-    },
+    mutationFn: (input) => TransactionService.create(input),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: getUserBalanceQueryKey({
-          userId: user.id,
-        }),
+        queryKey: getUserBalanceQueryKey({ userId: user.id }),
       });
       queryClient.invalidateQueries({
-        queryKey: ['getTransactions', user.id],
+        queryKey: getTransactionsQueryKey({ userId: user.id }),
       });
     },
   });
@@ -38,6 +34,25 @@ export const useGetTransactions = ({ from, to }) => {
   return useQuery({
     queryKey: getTransactionsQueryKey({ userId: user.id, from, to }),
     queryFn: () => TransactionService.getAll({ from, to }),
-    enabled: Boolean(from) && Boolean(to) && Boolean(user?.id),
+    enabled: Boolean(from) && Boolean(to) && Boolean(user.id),
+  });
+};
+
+export const editTransactionMutationKey = ['editTransaction'];
+
+export const useEditTransaction = () => {
+  const queryClient = useQueryClient();
+  const { user } = useAuthContext();
+  return useMutation({
+    mutationKey: editTransactionMutationKey,
+    mutationFn: (input) => TransactionService.update(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: getUserBalanceQueryKey({ userId: user.id }),
+      });
+      queryClient.invalidateQueries({
+        queryKey: getTransactionsQueryKey({ userId: user.id }),
+      });
+    },
   });
 };

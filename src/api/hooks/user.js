@@ -19,7 +19,7 @@ export const useGetUserBalance = (from, to) => {
     // Refetch a cada 5 minutos
     staleTime: 1000 * 60 * 5,
     // Só fazer a requisição se tiver o from, to e user.id
-    enabled: Boolean(from) && Boolean(to) && Boolean(user?.id),
+    // enabled: Boolean(from) && Boolean(to) && Boolean(user?.id),
   });
 };
 
