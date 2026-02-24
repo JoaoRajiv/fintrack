@@ -5,9 +5,10 @@ import { DataTable } from './ui/data-table';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { formatCurrency } from '@/helpers/currency';
-import { CircleIcon, ExternalLinkIcon } from 'lucide-react';
+import { ExternalLinkIcon } from 'lucide-react';
 import TransactionTypeBadge from './transaction-type-badge';
 import { Button } from './ui/button';
+import { ScrollArea } from './ui/scroll-area';
 
 const columns = [
   {
@@ -16,7 +17,7 @@ const columns = [
   },
   {
     accessorKey: 'type',
-    header: 'Descrição',
+    header: 'Tipo',
     cell: ({ row: { original: transaction } }) => {
       return <TransactionTypeBadge type={transaction.type} />;
     },
@@ -40,7 +41,7 @@ const columns = [
   {
     accessorKey: 'actions',
     header: 'Ações',
-    cell: ({ row: { original: transaction } }) => {
+    cell: () => {
       return (
         <Button variant="ghost" size="sm">
           <ExternalLinkIcon />
@@ -55,7 +56,14 @@ const TransactionTable = () => {
   const from = searchParams.get('from');
   const to = searchParams.get('to');
   const { data: transactions } = useGetTransactions({ from, to });
-  return <DataTable columns={columns} data={transactions || []} />;
+  return (
+    <>
+      <h2 className="text-2xl font-bold">Transações</h2>
+      <ScrollArea className="h-[500px] max-h-[500px] rounded-md border">
+        <DataTable columns={columns} data={transactions || []} />
+      </ScrollArea>
+    </>
+  );
 };
 
 export default TransactionTable;
